@@ -12,13 +12,12 @@ class PQ9Client:
         self.loop = 0
 
     def close(self):
-        asyncio.run(self.AwaitedClose())
+        self.loop.run_until_complete(self.AwaitedClose())
 
     async def AwaitedClose(self):
-        self.pq9reader.close()
+        #self.pq9reader.close()
         self.pq9writer.close()
         await self.pq9writer.wait_closed()
-        await self.pq9reader.wait_closed()
     
     def connect(self):
         self.loop = asyncio.new_event_loop()

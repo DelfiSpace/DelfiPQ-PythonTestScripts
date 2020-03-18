@@ -116,41 +116,44 @@ class PQ9CommandHandler(QRunnable):
     @Slot()
     def run(self):
         while True:
-            if(self.stopSignal):
-                return
+            try:
+                if(self.stopSignal):
+                    return
 
-            if(self.autoToggleEnabled):
-                elapsedTime = time.time() - self.autoToggleStartTime
-                #print(str(elapsedTime) + "  -  ", end = "")
-                #print(self.autoToggleOnTime)
-                if(elapsedTime > (self.autoToggleOffTime + self.autoToggleOnTime)) :
-                    #turn devices on
-                    self.autoToggleStartTime = time.time()
-                    for target in self.autoToggleTargetList:
-                        if(self.busStates[target-1] == False):
-                            self.toggleBusCmd(target)
-                elif(elapsedTime > self.autoToggleOnTime):
-                    for target in self.autoToggleTargetList:
-                        if(self.busStates[target-1] == True):
-                            self.toggleBusCmd(target)
-                        #turn devices off
+                if(self.autoToggleEnabled):
+                    elapsedTime = time.time() - self.autoToggleStartTime
+                    #print(str(elapsedTime) + "  -  ", end = "")
+                    #print(self.autoToggleOnTime)
+                    if(elapsedTime > (self.autoToggleOffTime + self.autoToggleOnTime)) :
+                        #turn devices on
+                        self.autoToggleStartTime = time.time()
+                        for target in self.autoToggleTargetList:
+                            if(self.busStates[target-1] == False):
+                                self.toggleBusCmd(target)
+                    elif(elapsedTime > self.autoToggleOnTime):
+                        for target in self.autoToggleTargetList:
+                            if(self.busStates[target-1] == True):
+                                self.toggleBusCmd(target)
+                            #turn devices off
 
-            while(not self.commandQueue.empty()):
-                #command Queue is not empty! so run commands
-                command = self.commandQueue.get()
-                succes, msg = self.pq9client.processCommand(command)
-            
-            if(self.getTelemetry):
-                command = {}
-                command["_send_"] = "SendRaw"
-                command["dest"] = "2" # EPS
-                command["src"] = "1"
-                command["data"] = "3 1"
-                succes, msg = self.pq9client.processCommand(command)
-                if(succes):
-                    self.logTelemetry(msg)
+                while(not self.commandQueue.empty()):
+                    #command Queue is not empty! so run commands
+                    command = self.commandQueue.get()
+                    succes, msg = self.pq9client.processCommand(command)
+                
+                if(self.getTelemetry):
+                    command = {}
+                    command["_send_"] = "SendRaw"
+                    command["dest"] = "2" # EPS
+                    command["src"] = "1"
+                    command["data"] = "3 1"
+                    succes, msg = self.pq9client.processCommand(command)
+                    if(succes):
+                        self.logTelemetry(msg)
 
-            time.sleep(.1)
+                time.sleep(.1)
+            except:
+                pass
     
 
 class EPSTestingGui(QMainWindow):
@@ -270,6 +273,12 @@ class EPSTestingGui(QMainWindow):
         self.cmdHandler.toggleAutoToggle(state, targetList, int(self.bus_ontime.text.text()), int(self.bus_offtime.text.text()))
 
     def reconnectEGSE(self):
+        try:
+            self.cmdHandler.pq9client.close()
+        except:
+            pass
+        # self.cmdHandler.stopSignal = True
+        # self.cmdHandler = PQ9CommandHandler()
         self.cmdHandler.pq9client.connect()
 
     def reconnectSerial(self):
