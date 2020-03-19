@@ -154,6 +154,7 @@ class PQ9CommandHandler(QRunnable):
                 time.sleep(.1)
             except:
                 pass
+                time.sleep(.5)
     
 
 class EPSTestingGui(QMainWindow):
@@ -270,7 +271,7 @@ class EPSTestingGui(QMainWindow):
             targetList += [3]
         if self.bus_4_toggle_auto.isChecked():
             targetList += [4]
-        self.cmdHandler.toggleAutoToggle(state, targetList, int(self.bus_ontime.text.text()), int(self.bus_offtime.text.text()))
+        self.cmdHandler.toggleAutoToggle(state, targetList, float(self.bus_ontime.text.text()), float(self.bus_offtime.text.text()))
 
     def reconnectEGSE(self):
         try:
