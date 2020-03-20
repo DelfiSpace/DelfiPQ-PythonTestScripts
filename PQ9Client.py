@@ -48,7 +48,7 @@ class PQ9Client:
 
     async def AwaitedGetFrame(self):
         try:
-            rxMsg = await asyncio.wait_for(self.pq9reader.readline(), timeout=2)
+            rxMsg = await asyncio.wait_for(self.pq9reader.readline(), timeout=0.5)
             return True, rxMsg
         except asyncio.TimeoutError:
             print("PQ9EGSE Reply Timeout!")
