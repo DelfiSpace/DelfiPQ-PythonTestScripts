@@ -72,7 +72,7 @@ class PQ9CommandHandler(QRunnable):
         command = {}
         command["_send_"] = "SendRaw"
         command["dest"] = "2" # EPS
-        command["src"] = "1"
+        command["src"] = "8"
         command["data"] = "1 1 "+str(busNr)+ (" 0" if self.busStates[busNr-1] else " 1") # PowerBus Request
         self.commandQueue.put(command)
         self.busStates[busNr-1] = not self.busStates[busNr-1]
@@ -145,7 +145,7 @@ class PQ9CommandHandler(QRunnable):
                     command = {}
                     command["_send_"] = "SendRaw"
                     command["dest"] = "2" # EPS
-                    command["src"] = "1"
+                    command["src"] = "8"
                     command["data"] = "3 1"
                     succes, msg = self.pq9client.processCommand(command)
                     if(succes):
