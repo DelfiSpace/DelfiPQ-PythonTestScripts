@@ -34,31 +34,34 @@ class PQ9CommandHandler(QRunnable):
         self.pq9client = PQ9Client.PQ9Client()
         self.pq9client.connect()
 
-        filename = "Telemetry_2_response.csv"
+        self.MaxLines = 24*3600
+        self.fileCount = 0
+        filename = "Telemetry_2_response_"+str(self.fileCount)+".csv"
         self.fo = open(filename, 'w+')
-        self.lastUptime = 0
+        self.lineCount = 0
         self.firstMsg = True 
-
-        self.autoToggleEnabled = False
-        self.autoToggleTargetList = []
-        self.autoToggleOnTime = 10
-        self.autoToggleOffTime = 10
-        self.autoToggleStartTime = 0
+        self.lastUptime = 0
 
 
+        self.autoToggleEnabled = [False, False, False, False]
+        self.autoToggleOnTime = [10, 10, 10, 10]
+        self.autoToggleOffTime = [10, 10, 10, 10]
+        self.autoToggleStartTime = [0, 0, 0, 0]
 
-    def toggleAutoToggle(self, state, toggleList, onTime, offTime):
-        self.autoToggleEnabled = state
-        self.autoToggleStartTime = time.time()
-        self.autoToggleTargetList = toggleList
-        self.autoToggleOnTime = onTime
-        self.autoToggleOffTime = offTime
+
+
+    def toggleAutoToggle(self, state, toggleTarget, onTime, offTime):
+        print("OnTime: "+str(onTime))
+        print("OffTime: "+str(offTime))
+        self.autoToggleEnabled[toggleTarget-1] = state
+        self.autoToggleStartTime[toggleTarget-1] = time.time()
+        self.autoToggleOnTime[toggleTarget-1] = onTime
+        self.autoToggleOffTime[toggleTarget-1] = offTime
         if(state):
             print("AutoToggle Enabled for: ", end ="")
-            print(self.autoToggleTargetList)
-            for target in self.autoToggleTargetList:
-                if(self.busStates[target-1] == False):
-                    self.toggleBusCmd(target)
+            print(toggleTarget)
+            if(self.busStates[toggleTarget-1] == False):
+                self.toggleBusCmd(toggleTarget)
         else:
             print("AutoToggle Disabled")
 
@@ -112,6 +115,13 @@ class PQ9CommandHandler(QRunnable):
                 print("New Telemetry found!")
                 self.lastUptime = json.loads(msg["Uptime"])["value"]
                 self.fo.write(valueString)
+                self.lineCount += 1
+                if(self.lineCount >= self.MaxLines):
+                    self.fileCount += 1
+                    filename = "Telemetry_2_response_"+str(self.fileCount)+".csv"
+                    self.fo = open(filename, 'w+')
+                    self.lineCount = 0
+                    self.firstMsg = True 
 
     @Slot()
     def run(self):
@@ -120,21 +130,22 @@ class PQ9CommandHandler(QRunnable):
                 if(self.stopSignal):
                     return
 
-                if(self.autoToggleEnabled):
-                    elapsedTime = time.time() - self.autoToggleStartTime
-                    #print(str(elapsedTime) + "  -  ", end = "")
-                    #print(self.autoToggleOnTime)
-                    if(elapsedTime > (self.autoToggleOffTime + self.autoToggleOnTime)) :
-                        #turn devices on
-                        self.autoToggleStartTime = time.time()
-                        for target in self.autoToggleTargetList:
-                            if(self.busStates[target-1] == False):
-                                self.toggleBusCmd(target)
-                    elif(elapsedTime > self.autoToggleOnTime):
-                        for target in self.autoToggleTargetList:
-                            if(self.busStates[target-1] == True):
-                                self.toggleBusCmd(target)
-                            #turn devices off
+                for i in range(0,4):
+                    if(self.autoToggleEnabled[i]):
+                        elapsedTime = time.time() - self.autoToggleStartTime[i]
+                        # print(elapsedTime)
+                        #print(str(elapsedTime) + "  -  ", end = "")
+                        #print(self.autoToggleOnTime)
+                        if(elapsedTime > (self.autoToggleOffTime[i] + self.autoToggleOnTime[i])) :
+                            #turn devices on
+                            self.autoToggleStartTime[i] = time.time()
+                            if(self.busStates[i] == False):
+                                self.toggleBusCmd(i+1)
+                        elif(elapsedTime > self.autoToggleOnTime[i]):
+                            #print("turn off!")
+                            if(self.busStates[i] == True):
+                                self.toggleBusCmd(i+1)
+                                #turn devices off
 
                 while(not self.commandQueue.empty()):
                     #command Queue is not empty! so run commands
@@ -215,34 +226,76 @@ class EPSTestingGui(QMainWindow):
         bus_toggleWidget.setLayout(bus_toggleLayout)
         busControlLayout.addWidget(bus_toggleWidget)
 
-        busControlAutoWidget = QWidget()
-        busControlAutoLayout = QVBoxLayout()
-        busControlAutoWidget.setLayout(busControlAutoLayout)
-        busControlAutoLabel = QLabel("Automatic Bus Toggle")
-        busControlAutoLabel.setAlignment(Qt.AlignHCenter)
-        busControlAutoLayout.addWidget(busControlAutoLabel)
-        self.bus_1_toggle_auto = QCheckBox("BUS1")
-        self.bus_2_toggle_auto = QCheckBox("BUS2")
-        self.bus_3_toggle_auto = QCheckBox("BUS3")
-        self.bus_4_toggle_auto = QCheckBox("BUS4")
-        self.bus_offtime = QFillBox("OFF Time [sec]", 10)
-        self.bus_ontime = QFillBox("ON Time [sec]", 10)
-        bus_auto_start = QPushButton("START")
-        bus_auto_stop = QPushButton("STOP")
-        bus_auto_start.pressed.connect(lambda x=True: self.toggleAutoToggle(x))
-        bus_auto_stop.pressed.connect(lambda x=False: self.toggleAutoToggle(x))
-        bus_toggle_autoLayout = QGridLayout()
-        bus_toggle_autoLayout.addWidget(self.bus_offtime,0,2,1,2)
-        bus_toggle_autoLayout.addWidget(self.bus_ontime,0,0,1,2)
-        bus_toggle_autoLayout.addWidget(bus_auto_start,1,0,1,2)
-        bus_toggle_autoLayout.addWidget(bus_auto_stop,1,2,1,2)
-        bus_toggle_autoLayout.addWidget(self.bus_1_toggle_auto,2,0,1,1)
-        bus_toggle_autoLayout.addWidget(self.bus_2_toggle_auto,2,1,1,1)
-        bus_toggle_autoLayout.addWidget(self.bus_3_toggle_auto,2,2,1,1)
-        bus_toggle_autoLayout.addWidget(self.bus_4_toggle_auto,2,3,1,1)
-        bus_toggle_autoWidget = QWidget()
-        bus_toggle_autoWidget.setLayout(bus_toggle_autoLayout)
-        busControlAutoLayout.addWidget(bus_toggle_autoWidget)
+        bus1ControlAutoWidget = QWidget()
+        bus1ControlAutoLayout = QVBoxLayout()
+        bus1ControlAutoWidget.setLayout(bus1ControlAutoLayout)
+        self.bus1_offtime = QFillBox("OFF Time [sec]", 10)
+        self.bus1_ontime = QFillBox("ON Time [sec]", 10)
+        bus1_auto_start = QPushButton("START")
+        bus1_auto_stop = QPushButton("STOP")
+        bus1_auto_start.pressed.connect(lambda x=True, target=1: self.toggleAutoToggle(x, target))
+        bus1_auto_stop.pressed.connect(lambda x=False, target=1: self.toggleAutoToggle(x, target))
+        bus1_toggle_autoLayout = QGridLayout()
+        bus1_toggle_autoLayout.addWidget(self.bus1_offtime,0,2,1,2)
+        bus1_toggle_autoLayout.addWidget(self.bus1_ontime,0,0,1,2)
+        bus1_toggle_autoLayout.addWidget(bus1_auto_start,1,0,1,2)
+        bus1_toggle_autoLayout.addWidget(bus1_auto_stop,1,2,1,2)
+        bus1_toggle_autoWidget = QWidget()
+        bus1_toggle_autoWidget.setLayout(bus1_toggle_autoLayout)
+        bus1ControlAutoLayout.addWidget(bus1_toggle_autoWidget)
+
+        bus2ControlAutoWidget = QWidget()
+        bus2ControlAutoLayout = QVBoxLayout()
+        bus2ControlAutoWidget.setLayout(bus2ControlAutoLayout)
+        self.bus2_offtime = QFillBox("OFF Time [sec]", 10)
+        self.bus2_ontime = QFillBox("ON Time [sec]", 10)
+        bus2_auto_start = QPushButton("START")
+        bus2_auto_stop = QPushButton("STOP")
+        bus2_auto_start.pressed.connect(lambda x=True, target=2: self.toggleAutoToggle(x, target))
+        bus2_auto_stop.pressed.connect(lambda x=False, target=2: self.toggleAutoToggle(x, target))
+        bus2_toggle_autoLayout = QGridLayout()
+        bus1_toggle_autoLayout.addWidget(self.bus2_offtime,2,2,1,2)
+        bus1_toggle_autoLayout.addWidget(self.bus2_ontime,2,0,1,2)
+        bus1_toggle_autoLayout.addWidget(bus2_auto_start,3,0,1,2)
+        bus1_toggle_autoLayout.addWidget(bus2_auto_stop,3,2,1,2)
+        bus2_toggle_autoWidget = QWidget()
+        bus2_toggle_autoWidget.setLayout(bus2_toggle_autoLayout)
+        bus2ControlAutoLayout.addWidget(bus2_toggle_autoWidget)
+
+        bus3ControlAutoWidget = QWidget()
+        bus3ControlAutoLayout = QVBoxLayout()
+        bus3ControlAutoWidget.setLayout(bus3ControlAutoLayout)
+        self.bus3_offtime = QFillBox("OFF Time [sec]", 10)
+        self.bus3_ontime = QFillBox("ON Time [sec]", 10)
+        bus3_auto_start = QPushButton("START")
+        bus3_auto_stop = QPushButton("STOP")
+        bus3_auto_start.pressed.connect(lambda x=True, target=3: self.toggleAutoToggle(x, target))
+        bus3_auto_stop.pressed.connect(lambda x=False, target=3: self.toggleAutoToggle(x, target))
+        bus3_toggle_autoLayout = QGridLayout()
+        bus1_toggle_autoLayout.addWidget(self.bus3_offtime,4,2,1,2)
+        bus1_toggle_autoLayout.addWidget(self.bus3_ontime,4,0,1,2)
+        bus1_toggle_autoLayout.addWidget(bus3_auto_start,5,0,1,2)
+        bus1_toggle_autoLayout.addWidget(bus3_auto_stop,5,2,1,2)
+        bus3_toggle_autoWidget = QWidget()
+        bus3_toggle_autoWidget.setLayout(bus3_toggle_autoLayout)
+        bus3ControlAutoLayout.addWidget(bus3_toggle_autoWidget)
+
+        bus4ControlAutoWidget = QWidget()
+        bus4ControlAutoLayout = QVBoxLayout()
+        self.bus4_offtime = QFillBox("OFF Time [sec]", 10)
+        self.bus4_ontime = QFillBox("ON Time [sec]", 10)
+        bus4_auto_start = QPushButton("START")
+        bus4_auto_stop = QPushButton("STOP")
+        bus4_auto_start.pressed.connect(lambda x=True, target=4: self.toggleAutoToggle(x, target))
+        bus4_auto_stop.pressed.connect(lambda x=False, target=4: self.toggleAutoToggle(x, target))
+        bus4_toggle_autoLayout = QGridLayout()
+        bus1_toggle_autoLayout.addWidget(self.bus4_offtime,6,2,1,2)
+        bus1_toggle_autoLayout.addWidget(self.bus4_ontime,6,0,1,2)
+        bus1_toggle_autoLayout.addWidget(bus4_auto_start,7,0,1,2)
+        bus1_toggle_autoLayout.addWidget(bus4_auto_stop,7,2,1,2)
+        bus4_toggle_autoWidget = QWidget()
+        bus4_toggle_autoWidget.setLayout(bus4_toggle_autoLayout)
+        bus4ControlAutoLayout.addWidget(bus4_toggle_autoWidget)
 
         layout = QVBoxLayout()
         layout.addWidget(reconnectButton)
@@ -253,7 +306,7 @@ class EPSTestingGui(QMainWindow):
         layout.addWidget(QHLine())
         layout.addWidget(busControlWidget)
         layout.addWidget(QHLine())
-        layout.addWidget(busControlAutoWidget)
+        layout.addWidget(bus1ControlAutoWidget)
         w = QWidget()
         w.setLayout(layout)
 
@@ -261,17 +314,15 @@ class EPSTestingGui(QMainWindow):
 
         self.show()
 
-    def toggleAutoToggle(self, state):
-        targetList = []
-        if self.bus_1_toggle_auto.isChecked():
-            targetList += [1]
-        if self.bus_2_toggle_auto.isChecked():
-            targetList += [2]
-        if self.bus_3_toggle_auto.isChecked():
-            targetList += [3]
-        if self.bus_4_toggle_auto.isChecked():
-            targetList += [4]
-        self.cmdHandler.toggleAutoToggle(state, targetList, float(self.bus_ontime.text.text()), float(self.bus_offtime.text.text()))
+    def toggleAutoToggle(self, state, toggleTarget):
+        if(toggleTarget == 1):
+            self.cmdHandler.toggleAutoToggle(state, toggleTarget, float(self.bus1_ontime.text.text()), float(self.bus1_offtime.text.text()))
+        if(toggleTarget == 2):
+            self.cmdHandler.toggleAutoToggle(state, toggleTarget, float(self.bus2_ontime.text.text()), float(self.bus2_offtime.text.text()))
+        if(toggleTarget == 3):
+            self.cmdHandler.toggleAutoToggle(state, toggleTarget, float(self.bus3_ontime.text.text()), float(self.bus3_offtime.text.text()))
+        if(toggleTarget == 4):
+            self.cmdHandler.toggleAutoToggle(state, toggleTarget, float(self.bus4_ontime.text.text()), float(self.bus4_offtime.text.text()))
 
     def reconnectEGSE(self):
         try:
