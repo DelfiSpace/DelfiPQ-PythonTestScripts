@@ -5,8 +5,8 @@ class PQ9Client:
 
     def __init__(self):
         super().__init__()
-        TCP_IP = 'localhost'
-        TCP_PORT = 10000
+        self.TCP_IP = '0.tcp.ngrok.io'
+        self.TCP_PORT = '19076'
         self.pq9reader = 0
         self.pq9writer = 0
         self.loop = 0
@@ -24,10 +24,8 @@ class PQ9Client:
         self.loop.run_until_complete(self.AwaitedConnect())
 
     async def AwaitedConnect(self):
-        TCP_IP = 'localhost'
-        TCP_PORT = 10000
-        self.pq9reader, self.pq9writer = await asyncio.open_connection(TCP_IP, TCP_PORT, loop=self.loop)
-        print("PQ9Socket: Connected to localhost:10000")
+        self.pq9reader, self.pq9writer = await asyncio.open_connection(self.TCP_IP, self.TCP_PORT, loop=self.loop)
+        print("PQ9Socket: Connected to "+str(self.TCP_IP)+":"+str(self.TCP_PORT))
 
     def sendFrame(self, inputFrame):
         self.loop.run_until_complete(self.AwaitedSendFrame(inputFrame))
@@ -48,7 +46,7 @@ class PQ9Client:
 
     async def AwaitedGetFrame(self):
         try:
-            rxMsg = await asyncio.wait_for(self.pq9reader.readline(), timeout=0.5)
+            rxMsg = await asyncio.wait_for(self.pq9reader.readline(), timeout=2)
             return True, rxMsg
         except asyncio.TimeoutError:
             print("PQ9EGSE Reply Timeout!")
