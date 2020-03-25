@@ -23,16 +23,17 @@ if __name__ == "__main__":
     fi = open(inputFileName, "r")
     fo = open(inputFileName+"_response", 'w')
     commandlines = fi.readlines()
-    for commandline in commandlines:
+    for i,commandline in enumerate(commandlines):
         command = {}
         command["_send_"] = "SendRaw"
         command["dest"] = dest
-        command["src"] = "1"
+        command["src"] = "8"
         command["data"] = commandline.rstrip("\n")
         pq9client.sendFrame(command)
         succes, msg = pq9client.getFrame()
         if(succes):
-            print(msg)
+            msg = msg['_raw_']
+            print("%.2f" % (100 * i/(len(commandlines)-1)) + "%" )
             fo.write(msg.replace('[','').replace(']','').replace(',','') + '\n' )
         else:
             break

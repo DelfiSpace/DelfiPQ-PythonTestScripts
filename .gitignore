@@ -1,3 +1,10 @@
 
 *.pyc
 *.csv
+
+*.bin
+
+*.pq9
+
+
+*.pq9_response
