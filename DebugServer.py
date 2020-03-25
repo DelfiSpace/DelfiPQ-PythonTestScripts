@@ -17,7 +17,12 @@ class DebugServer:
                 line = self.ser.readline()
                 print(line)
                 for con in self.connections:
-                    con.sendall(line)
+                    try:
+                        con.sendall(line)
+                    except:
+                        print("client disconnected?")
+                        self.connections.remove(con)
+        self.handle_serial()
 
 
     def __init__(self):
