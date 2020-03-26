@@ -5,8 +5,8 @@ class PQ9Client:
 
     def __init__(self):
         super().__init__()
-        self.TCP_IP = '0.tcp.ngrok.io'
-        self.TCP_PORT = '19076'
+        self.TCP_IP = 'localhost'
+        self.TCP_PORT = '10000'
         self.pq9reader = 0
         self.pq9writer = 0
         self.loop = 0
