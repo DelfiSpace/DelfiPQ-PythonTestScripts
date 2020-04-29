@@ -31,7 +31,7 @@ def test_SinglePing(destination):
     
 def test_MultiplePing(destination):
     global pq9client
-    repeat = 10
+    repeat = 1000
     command = {}
     command["_send_"] = "Ping"
     command["Destination"] = destination
@@ -46,3 +46,26 @@ def test_MultiplePing(destination):
     assert count == repeat, "Missing reponses"
     print("Elapsed time: ", round(elapsedTime * 1000, 0), " ms")
     print("Responses ", count)
+    
+def test_PingWithExtraBytes(destination):
+    global pq9client
+    repeat = 254
+    command = {}
+    command["_send_"] = "SendRaw"
+    command["dest"] = '1'
+    command["src"] = '2'    
+    count = 0
+    startTime = time.time()
+    for i in range(repeat):
+        command["data"] = "17 1" + ( " 0" * i)
+        pq9client.sendFrame(command)
+        succes, msg = pq9client.getFrame()
+        #report if one frame is missing
+        if (succes != True):
+        	print("Frame", i, "not received")
+        	print(command)     
+        count+= 1
+    elapsedTime = time.time() - startTime
+    assert count == repeat, "Missing reponses"
+    print("Elapsed time: ", round(elapsedTime * 1000, 0), " ms")
+    print("All Ping requests received")
