@@ -52,8 +52,8 @@ def test_PingWithExtraBytes(destination):
     repeat = 254
     command = {}
     command["_send_"] = "SendRaw"
-    command["dest"] = '1'
-    command["src"] = '2'    
+    command["dest"] = '5'
+    command["src"] = '8'    
     count = 0
     startTime = time.time()
     for i in range(repeat):
