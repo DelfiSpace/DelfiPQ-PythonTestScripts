@@ -4,10 +4,7 @@ import PQ9Client
 import time
 import json
 
-# Global variables
-pq9client = 0
-
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def do_something(request):
     global pq9client
     pq9client = PQ9Client.PQ9Client('localhost', 10000)
@@ -19,7 +16,7 @@ def finalizer_function():
         
 def test_SoftReset(destination):
     global pq9client
-    
+    time.sleep(3)
     print("This function tests the board Soft Reset by requesting the board uptime, performing a soft reset and requesting the uptime again.")
     print()
     
@@ -27,14 +24,12 @@ def test_SoftReset(destination):
     command["_send_"] = "GetTelemetry"
     command["Destination"] = destination
     command["Source"] = "EGSE"
-    pq9client.sendFrame(command)
-    succes, msg = pq9client.getFrame()
+    succes, msg = pq9client.processCommand(command)
     assert succes == True, "Error: System is not responding"
     uptimeBeforeReset = int(json.loads(msg["Uptime"])["value"])
     if( uptimeBeforeReset < 3 ):
         time.sleep(3 - uptimeBeforeReset)
-        pq9client.sendFrame(command)
-        succes, msg = pq9client.getFrame()
+        succes, msg = pq9client.processCommand(command)
         assert succes == True, "Error: System is not responding"
         uptimeBeforeReset = int(json.loads(msg["Uptime"])["value"])
     print("Uptime before reset:", uptimeBeforeReset, "s")
@@ -62,6 +57,7 @@ def test_SoftReset(destination):
 def test_HardReset(destination):
     global pq9client
     
+    time.sleep(3)
     print("This function tests the board Hard Reset by requesting the board uptime, performing a hard reset and requesting the uptime again.")
     print()
     
@@ -104,6 +100,7 @@ def test_HardReset(destination):
 def test_PowerCycle(destination):
     global pq9client
     
+    time.sleep(3)
     print("This function tests the board power cycle by requesting the board uptime, performing a power cycle and requesting the uptime again.")
     print()
     

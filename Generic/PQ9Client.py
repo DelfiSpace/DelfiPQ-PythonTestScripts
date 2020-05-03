@@ -55,14 +55,4 @@ class PQ9Client:
     def processCommand(self, command):
         self.sendFrame(command)
         succes, msg = self.getFrame()
-        if(succes == False):
-            print("PQ9EGSE Reply Timeout!")
-            return False, []
-        else:
-            while((json.loads((msg["_raw_"]))[2] == (command["dest"]).split()[0]) and  #if the destination == source and service == service
-                (json.loads((msg["_raw_"]))[3] == (command["data"]).split()[0])):
-                succes, msg = self.getFrame()
-                if(succes == False):
-                    print("PQ9EGSE Reply Timeout!")
-                    return False, []
-            return succes, msg
+        return succes, msg

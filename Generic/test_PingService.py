@@ -3,10 +3,7 @@ import pytest
 import PQ9Client
 import time
 
-# Global variables
-pq9client = 0
-
-@pytest.fixture(scope="module", autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 def do_something(request):
     global pq9client
     pq9client = PQ9Client.PQ9Client('localhost', 10000)
@@ -39,15 +36,14 @@ def test_MultiplePing(destination):
     count = 0
     startTime = time.time()
     for i in range(repeat):
-        pq9client.sendFrame(command)
-        succes, msg = pq9client.getFrame()
+        succes, msg = pq9client.processCommand(command)
         count+= 1
     elapsedTime = time.time() - startTime
     assert count == repeat, "Missing reponses"
     print("Elapsed time: ", round(elapsedTime * 1000, 0), " ms")
     print("Responses ", count)
     
-def test_PingWithExtraBytes(destination):
+def est_PingWithExtraBytes(destination):
     global pq9client
     repeat = 254
     command = {}
@@ -58,8 +54,7 @@ def test_PingWithExtraBytes(destination):
     startTime = time.time()
     for i in range(repeat):
         command["data"] = "17 1" + ( " 0" * i)
-        pq9client.sendFrame(command)
-        succes, msg = pq9client.getFrame()
+        succes, msg = pq9client.processCommand(command)
         #report if one frame is missing
         if (succes != True):
         	print("Frame", i, "not received")
