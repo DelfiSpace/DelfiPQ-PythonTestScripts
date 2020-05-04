@@ -7,18 +7,7 @@ import PQ9Client
 import time
 import json
 
-@pytest.fixture(scope="session", autouse=True)
-def do_something(request):
-    global pq9client
-    pq9client = PQ9Client.PQ9Client('localhost', 10000)
-    pq9client.connect()
- 
-def finalizer_function():
-    global pq9client
-    pq9client.close()
-
-def tff_PingWithExtraBytes(destination):
-    global pq9client
+def test_PingWithExtraBytes(pq9_connection, destination):
     repeat = 254
     command = {}
     command["_send_"] = "SendRaw"
@@ -30,8 +19,8 @@ def tff_PingWithExtraBytes(destination):
         print(i)
         command["data"] = "17 1" + ( " 0" * i)
         #print(command)
-        pq9client.sendFrame(command)
-        succes, msg = pq9client.getFrame()
+        pq9_connection.sendFrame(command)
+        succes, msg = pq9_connection.getFrame()
         #report if one frame is missing
         if (succes != True):
         	print("Frame", i, "not received")
@@ -46,14 +35,14 @@ def tff_PingWithExtraBytes(destination):
     command["_send_"] = "GetTelemetry"
     command["Destination"] = "ADCS"
     command["Source"] = "EGSE"
-    pq9client.sendFrame(command)
-    succes, msg = pq9client.getFrame()
+    pq9_connection.sendFrame(command)
+    succes, msg = pq9_connection.getFrame()
     assert succes == True, "Error: System is not responding"
     uptimeBeforeReset = int(json.loads(msg["Uptime"])["value"])
     if( uptimeBeforeReset < 3 ):
         time.sleep(3 - uptimeBeforeReset)
-        pq9client.sendFrame(command)
-        succes, msg = pq9client.getFrame()
+        pq9_connection.sendFrame(command)
+        succes, msg = pq9_connection.getFrame()
         assert succes == True, "Error: System is not responding"
         uptimeBeforeReset = int(json.loads(msg["Uptime"])["value"])
     print("Uptime before reset:", uptimeBeforeReset, "s")
@@ -62,16 +51,16 @@ def tff_PingWithExtraBytes(destination):
     command["Destination"] = "ADCS"
     command["Source"] = "EGSE"
     command["Type"] = "Soft"
-    pq9client.sendFrame(command)
-    succes, msg = pq9client.getFrame()
+    pq9_connection.sendFrame(command)
+    succes, msg = pq9_connection.getFrame()
     assert succes == True, "System is not responding"
     time.sleep(1)
     
     command["_send_"] = "GetTelemetry"
     command["Destination"] = "ADCS"
     command["Source"] = "EGSE"
-    pq9client.sendFrame(command)
-    succes, msg = pq9client.getFrame()
+    pq9_connection.sendFrame(command)
+    succes, msg = pq9_connection.getFrame()
     assert succes == True, "Error: System is not responding"
     uptimeAfterReset = int(json.loads(msg["Uptime"])["value"])
     assert uptimeAfterReset < 2, "Error: Board did not reset"

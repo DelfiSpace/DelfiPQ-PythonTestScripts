@@ -30,11 +30,11 @@ def test_MultiplePing(pq9_connection, destination):
     print("Elapsed time: ", round(elapsedTime * 1000, 0), " ms")
     print("Responses ", count)
     
-def est_PingWithExtraBytes(pq9_connection, destination):
+def test_PingWithExtraBytes(pq9_connection, destination):
     repeat = 254
     command = {}
     command["_send_"] = "SendRaw"
-    command["dest"] = '2'
+    command["dest"] = '5'
     command["src"] = '8'    
     count = 0
     startTime = time.time()
