@@ -1,4 +1,4 @@
-# content of test_sysexit.py
+# Test class to test the Ping service
 import pytest
 import PQ9Client
 import time
@@ -15,7 +15,7 @@ def test_SinglePing(pq9_connection, destination):
     print("Elapsed time: ", round(elapsedTime * 1000, 0), " ms")
     
 def test_MultiplePing(pq9_connection, destination):
-    repeat = 10
+    repeat = 1000
     command = {}
     command["_send_"] = "Ping"
     command["Destination"] = destination
@@ -34,8 +34,8 @@ def test_PingWithExtraBytes(pq9_connection, destination):
     repeat = 254
     command = {}
     command["_send_"] = "SendRaw"
-    command["dest"] = '5'
-    command["src"] = '8'    
+    command["dest"] = getAddress(destination)
+    command["src"] = getAddress('EGSE')   
     count = 0
     startTime = time.time()
     for i in range(repeat):
@@ -50,3 +50,17 @@ def test_PingWithExtraBytes(pq9_connection, destination):
     assert count == repeat, "Missing reponses"
     print("Elapsed time: ", round(elapsedTime * 1000, 0), " ms")
     print("All Ping requests received")
+    
+def getAddress(i):
+   switcher={
+      'OBC':'1',
+      'EPS':'2',
+      'ADB':'3',
+      'COMMS':'4',
+      'ADCS':'5',
+      'PROP':'6',
+      'DEBUG':'7',
+      'EGSE':'8',
+      'HPI':'100'
+      }
+   return switcher.get(i,0)
