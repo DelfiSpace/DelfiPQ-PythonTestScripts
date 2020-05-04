@@ -3,6 +3,7 @@ import pytest
 import PQ9Client
 import time
 import json
+from PQ9TestHelpers import getAddress
 
 def test_SoftReset(pq9_connection, destination):
     time.sleep(3)
