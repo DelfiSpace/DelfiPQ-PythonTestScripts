@@ -3,32 +3,19 @@ import pytest
 import PQ9Client
 import time
 
-@pytest.fixture(scope="session", autouse=True)
-def do_something(request):
-    global pq9client
-    pq9client = PQ9Client.PQ9Client('localhost', 10000)
-    pq9client.connect()
- 
-def finalizer_function():
-    global pq9client
-    pq9client.close()
-        
-def test_SinglePing(destination):
-    global pq9client
+def test_SinglePing(pq9_connection, destination):
     command = {}
     command["_send_"] = "Ping"
     command["Destination"] = destination
     command["Source"] = "EGSE"
     startTime = time.time()
-    pq9client.sendFrame(command)
-    succes, msg = pq9client.getFrame()
+    succes, msg = pq9_connection.processCommand(command)
     elapsedTime = time.time() - startTime
     assert succes == True, "System is not responding"
     print("Elapsed time: ", round(elapsedTime * 1000, 0), " ms")
     
-def test_MultiplePing(destination):
-    global pq9client
-    repeat = 1000
+def test_MultiplePing(pq9_connection, destination):
+    repeat = 10
     command = {}
     command["_send_"] = "Ping"
     command["Destination"] = destination
@@ -36,25 +23,24 @@ def test_MultiplePing(destination):
     count = 0
     startTime = time.time()
     for i in range(repeat):
-        succes, msg = pq9client.processCommand(command)
+        succes, msg = pq9_connection.processCommand(command)
         count+= 1
     elapsedTime = time.time() - startTime
     assert count == repeat, "Missing reponses"
     print("Elapsed time: ", round(elapsedTime * 1000, 0), " ms")
     print("Responses ", count)
     
-def est_PingWithExtraBytes(destination):
-    global pq9client
+def est_PingWithExtraBytes(pq9_connection, destination):
     repeat = 254
     command = {}
     command["_send_"] = "SendRaw"
-    command["dest"] = '5'
+    command["dest"] = '2'
     command["src"] = '8'    
     count = 0
     startTime = time.time()
     for i in range(repeat):
         command["data"] = "17 1" + ( " 0" * i)
-        succes, msg = pq9client.processCommand(command)
+        succes, msg = pq9_connection.processCommand(command)
         #report if one frame is missing
         if (succes != True):
         	print("Frame", i, "not received")
