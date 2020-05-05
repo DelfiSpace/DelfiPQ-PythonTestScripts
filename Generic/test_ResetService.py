@@ -6,7 +6,6 @@ import json
 from PQ9TestHelpers import getAddress
 
 def test_SoftReset(pq9_connection, destination):
-    time.sleep(3)
     print("This function tests the board Soft Reset by requesting the board uptime, performing a soft reset and requesting the uptime again.")
     print()
     
@@ -43,8 +42,6 @@ def test_SoftReset(pq9_connection, destination):
     print("Soft Reset successful")
 
 def test_HardReset(pq9_connection,destination):
-    
-    time.sleep(3)
     print("This function tests the board Hard Reset by requesting the board uptime, performing a hard reset and requesting the uptime again.")
     print()
     
@@ -81,8 +78,6 @@ def test_HardReset(pq9_connection,destination):
     print("Hard Reset successful")
 
 def test_PowerCycle(pq9_connection, destination):
-    
-    time.sleep(3)
     print("This function tests the board power cycle by requesting the board uptime, performing a power cycle and requesting the uptime again.")
     print()
     
