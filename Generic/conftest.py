@@ -4,7 +4,8 @@ import sys
 import PQ9Client
 import os
 import PQ9TestSuite
-
+from pytest_testconfig import config as testConfig
+    
 def pytest_configure(config):
     print(config.getoption("--destination"))
     global destinationAddress
@@ -41,7 +42,7 @@ def destination(request):
 
 @pytest.fixture(scope="session") #only 'make' this object once per session.
 def pq9_connection():
-    pq9client = PQ9Client.PQ9Client("localhost","10000")
+    pq9client = PQ9Client.PQ9Client(testConfig['PQ9EGSE']['server'], testConfig['PQ9EGSE']['port'])
     pq9client.connect()
 
     yield pq9client
