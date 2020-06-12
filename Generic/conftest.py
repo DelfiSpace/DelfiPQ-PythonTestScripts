@@ -7,7 +7,6 @@ import PQ9TestSuite
 from pytest_testconfig import config as testConfig
     
 def pytest_configure(config):
-    print(config.getoption("--destination"))
     global destinationAddress
     if (config.getoption("--system") != None):
         destinationAddress = config.getoption("--system")
@@ -19,15 +18,11 @@ def pytest_configure(config):
 def pytest_ignore_collect(path, config):
     global destinationAddress
     if (config.getoption("--system") != None):
-        #if (os.path.basename(path) == "test_ADCS.py"):
         return PQ9TestSuite.isTest(destinationAddress, os.path.basename(path))
-    	#    return False
-        #return True
     else:
         return False 
 
 def pytest_addoption(parser):
-    print("Option ")
     parser.addoption(
         "--destination", action="store", help="subsystem address", dest="destination",
     )
@@ -42,7 +37,10 @@ def destination(request):
 
 @pytest.fixture(scope="session") #only 'make' this object once per session.
 def pq9_connection():
-    pq9client = PQ9Client.PQ9Client(testConfig['PQ9EGSE']['server'], testConfig['PQ9EGSE']['port'])
+    pq9client = PQ9Client.PQ9Client(
+				testConfig['PQ9EGSE']['server'], 
+				testConfig['PQ9EGSE']['port'], 
+				int(testConfig['PQ9EGSE']['timeout']))
     pq9client.connect()
 
     yield pq9client

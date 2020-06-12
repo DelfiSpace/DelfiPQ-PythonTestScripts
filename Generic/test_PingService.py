@@ -16,7 +16,7 @@ def test_SinglePing(pq9_connection, destination):
     print("Elapsed time: ", round(elapsedTime * 1000, 0), " ms")
     
 def test_MultiplePing(pq9_connection, destination):
-    repeat = 1000
+    repeat = 10
     command = {}
     command["_send_"] = "Ping"
     command["Destination"] = destination
@@ -25,14 +25,15 @@ def test_MultiplePing(pq9_connection, destination):
     startTime = time.time()
     for i in range(repeat):
         succes, msg = pq9_connection.processCommand(command)
-        count+= 1
+        if (succes == True):
+        	count+= 1
     elapsedTime = time.time() - startTime
-    assert count == repeat, "Missing reponses"
     print("Elapsed time: ", round(elapsedTime * 1000, 0), " ms")
     print("Responses ", count)
-    
+    assert count == repeat, "Missing reponses"    
+
 def test_PingWithExtraBytes(pq9_connection, destination):
-    repeat = 254
+    repeat = 25
     command = {}
     command["_send_"] = "SendRaw"
     command["dest"] = getAddress(destination)
@@ -44,10 +45,10 @@ def test_PingWithExtraBytes(pq9_connection, destination):
         succes, msg = pq9_connection.processCommand(command)
         #report if one frame is missing
         if (succes != True):
-        	print("Frame", i, "not received")
-        	print(command)     
-        count+= 1
+        	print("Frame", i, "not received:", command)
+        else:
+        	count+= 1
     elapsedTime = time.time() - startTime
-    assert count == repeat, "Missing reponses"
     print("Elapsed time: ", round(elapsedTime * 1000, 0), " ms")
+    assert count == repeat, "Missing reponses"
     print("All Ping requests received")

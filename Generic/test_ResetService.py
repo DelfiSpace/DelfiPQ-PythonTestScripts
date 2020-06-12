@@ -17,7 +17,7 @@ def test_SoftReset(pq9_connection, destination):
     assert succes == True, "Error: System is not responding"
     uptimeBeforeReset = int(json.loads(msg["Uptime"])["value"])
     if( uptimeBeforeReset < 3 ):
-        time.sleep(3 - uptimeBeforeReset)
+        time.sleep(10 - uptimeBeforeReset)
         succes, msg = pq9_connection.processCommand(command)
         assert succes == True, "Error: System is not responding"
         uptimeBeforeReset = int(json.loads(msg["Uptime"])["value"])
@@ -53,7 +53,7 @@ def test_HardReset(pq9_connection,destination):
     assert succes == True, "Error: System is not responding"
     uptimeBeforeReset = int(json.loads(msg["Uptime"])["value"])
     if( uptimeBeforeReset < 3 ):
-        time.sleep(3 - uptimeBeforeReset)
+        time.sleep(10 - uptimeBeforeReset)
         succes, msg = pq9_connection.processCommand(command)
         assert succes == True, "Error: System is not responding"
         uptimeBeforeReset = int(json.loads(msg["Uptime"])["value"])
@@ -90,7 +90,7 @@ def test_PowerCycle(pq9_connection, destination):
     uptimeBeforeReset = int(json.loads(msg["Uptime"])["value"])
 
     if( uptimeBeforeReset < 3 ):
-        time.sleep(3 - uptimeBeforeReset)
+        time.sleep(10 - uptimeBeforeReset)
         succes, msg = pq9_connection.processCommand(command)
         assert succes == True, "Error: System is not responding"
         uptimeBeforeReset = int(json.loads(msg["Uptime"])["value"])

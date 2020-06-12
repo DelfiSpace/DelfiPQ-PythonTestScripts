@@ -10,7 +10,6 @@ def isTest(system, test):
 
     # string in the list
     if test in suite[system]:
-        print(test)
         return False;
     else:
         return True

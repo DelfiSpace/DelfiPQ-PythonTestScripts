@@ -20,8 +20,12 @@ class PQ9Client:
         await self.pq9writer.wait_closed()
     
     def connect(self):
-        self.loop = asyncio.new_event_loop()
-        self.loop.run_until_complete(self.AwaitedConnect())
+        try:
+            self.loop = asyncio.new_event_loop()
+            self.loop.run_until_complete(self.AwaitedConnect())
+        except ConnectionRefusedError:
+        except TimeoutError:
+            print('timeout error')
 
     async def AwaitedConnect(self):
         self.pq9reader, self.pq9writer = await asyncio.open_connection(self.TCP_IP, self.TCP_PORT, loop=self.loop)

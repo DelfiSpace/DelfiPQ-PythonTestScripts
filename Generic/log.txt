@@ -1,0 +1,335 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.8.2, pytest-5.4.1, py-1.8.1, pluggy-0.13.1
+rootdir: /Users/stefanosperett/Documents/PocketQube/FlightSoftware/DelfiPQ-PythonTestScripts/Generic, inifile: pytest.ini
+plugins: testconfig-0.2.0, html-2.1.1, metadata-1.8.0
+collected 7 items
+
+test_ADCS.py E                                                           [ 14%]
+test_PingService.py EEE                                                  [ 57%]
+test_ResetService.py EEE                                                 [100%]
+
+==================================== ERRORS ====================================
+_________________________ ERROR at setup of test_ADCS __________________________
+
+    @pytest.fixture(scope="session") #only 'make' this object once per session.
+    def pq9_connection():
+        pq9client = PQ9Client.PQ9Client(testConfig['PQ9EGSE']['server'], testConfig['PQ9EGSE']['port'])
+>       pq9client.connect()
+
+conftest.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+PQ9Client.py:25: in connect
+    self.loop.run_until_complete(self.AwaitedConnect())
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:616: in run_until_complete
+    return future.result()
+PQ9Client.py:30: in AwaitedConnect
+    self.pq9reader, self.pq9writer = await asyncio.open_connection(self.TCP_IP, self.TCP_PORT, loop=self.loop)
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/streams.py:52: in open_connection
+    transport, _ = await loop.create_connection(
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:1025: in create_connection
+    raise exceptions[0]
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:1010: in create_connection
+    sock = await self._connect_sock(
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:924: in _connect_sock
+    await self.sock_connect(sock, address)
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/selector_events.py:494: in sock_connect
+    return await fut
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_UnixSelectorEventLoop running=False closed=False debug=False>
+fut = <Future finished exception=ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 10000)")>
+sock = <socket.socket [closed] fd=-1, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6>
+address = ('127.0.0.1', 10000)
+
+    def _sock_connect_cb(self, fut, sock, address):
+        if fut.done():
+            return
+    
+        try:
+            err = sock.getsockopt(socket.SOL_SOCKET, socket.SO_ERROR)
+            if err != 0:
+                # Jump to any except clause below.
+>               raise OSError(err, f'Connect call failed {address}')
+E               ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 10000)
+
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/selector_events.py:526: ConnectionRefusedError
+______________________ ERROR at setup of test_SinglePing _______________________
+
+    @pytest.fixture(scope="session") #only 'make' this object once per session.
+    def pq9_connection():
+        pq9client = PQ9Client.PQ9Client(testConfig['PQ9EGSE']['server'], testConfig['PQ9EGSE']['port'])
+>       pq9client.connect()
+
+conftest.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+PQ9Client.py:25: in connect
+    self.loop.run_until_complete(self.AwaitedConnect())
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:616: in run_until_complete
+    return future.result()
+PQ9Client.py:30: in AwaitedConnect
+    self.pq9reader, self.pq9writer = await asyncio.open_connection(self.TCP_IP, self.TCP_PORT, loop=self.loop)
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/streams.py:52: in open_connection
+    transport, _ = await loop.create_connection(
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:1025: in create_connection
+    raise exceptions[0]
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:1010: in create_connection
+    sock = await self._connect_sock(
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:924: in _connect_sock
+    await self.sock_connect(sock, address)
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/selector_events.py:494: in sock_connect
+    return await fut
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_UnixSelectorEventLoop running=False closed=False debug=False>
+fut = <Future finished exception=ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 10000)")>
+sock = <socket.socket [closed] fd=-1, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6>
+address = ('127.0.0.1', 10000)
+
+    def _sock_connect_cb(self, fut, sock, address):
+        if fut.done():
+            return
+    
+        try:
+            err = sock.getsockopt(socket.SOL_SOCKET, socket.SO_ERROR)
+            if err != 0:
+                # Jump to any except clause below.
+>               raise OSError(err, f'Connect call failed {address}')
+E               ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 10000)
+
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/selector_events.py:526: ConnectionRefusedError
+_____________________ ERROR at setup of test_MultiplePing ______________________
+
+    @pytest.fixture(scope="session") #only 'make' this object once per session.
+    def pq9_connection():
+        pq9client = PQ9Client.PQ9Client(testConfig['PQ9EGSE']['server'], testConfig['PQ9EGSE']['port'])
+>       pq9client.connect()
+
+conftest.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+PQ9Client.py:25: in connect
+    self.loop.run_until_complete(self.AwaitedConnect())
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:616: in run_until_complete
+    return future.result()
+PQ9Client.py:30: in AwaitedConnect
+    self.pq9reader, self.pq9writer = await asyncio.open_connection(self.TCP_IP, self.TCP_PORT, loop=self.loop)
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/streams.py:52: in open_connection
+    transport, _ = await loop.create_connection(
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:1025: in create_connection
+    raise exceptions[0]
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:1010: in create_connection
+    sock = await self._connect_sock(
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:924: in _connect_sock
+    await self.sock_connect(sock, address)
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/selector_events.py:494: in sock_connect
+    return await fut
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_UnixSelectorEventLoop running=False closed=False debug=False>
+fut = <Future finished exception=ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 10000)")>
+sock = <socket.socket [closed] fd=-1, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6>
+address = ('127.0.0.1', 10000)
+
+    def _sock_connect_cb(self, fut, sock, address):
+        if fut.done():
+            return
+    
+        try:
+            err = sock.getsockopt(socket.SOL_SOCKET, socket.SO_ERROR)
+            if err != 0:
+                # Jump to any except clause below.
+>               raise OSError(err, f'Connect call failed {address}')
+E               ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 10000)
+
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/selector_events.py:526: ConnectionRefusedError
+__________________ ERROR at setup of test_PingWithExtraBytes ___________________
+
+    @pytest.fixture(scope="session") #only 'make' this object once per session.
+    def pq9_connection():
+        pq9client = PQ9Client.PQ9Client(testConfig['PQ9EGSE']['server'], testConfig['PQ9EGSE']['port'])
+>       pq9client.connect()
+
+conftest.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+PQ9Client.py:25: in connect
+    self.loop.run_until_complete(self.AwaitedConnect())
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:616: in run_until_complete
+    return future.result()
+PQ9Client.py:30: in AwaitedConnect
+    self.pq9reader, self.pq9writer = await asyncio.open_connection(self.TCP_IP, self.TCP_PORT, loop=self.loop)
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/streams.py:52: in open_connection
+    transport, _ = await loop.create_connection(
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:1025: in create_connection
+    raise exceptions[0]
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:1010: in create_connection
+    sock = await self._connect_sock(
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:924: in _connect_sock
+    await self.sock_connect(sock, address)
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/selector_events.py:494: in sock_connect
+    return await fut
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_UnixSelectorEventLoop running=False closed=False debug=False>
+fut = <Future finished exception=ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 10000)")>
+sock = <socket.socket [closed] fd=-1, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6>
+address = ('127.0.0.1', 10000)
+
+    def _sock_connect_cb(self, fut, sock, address):
+        if fut.done():
+            return
+    
+        try:
+            err = sock.getsockopt(socket.SOL_SOCKET, socket.SO_ERROR)
+            if err != 0:
+                # Jump to any except clause below.
+>               raise OSError(err, f'Connect call failed {address}')
+E               ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 10000)
+
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/selector_events.py:526: ConnectionRefusedError
+_______________________ ERROR at setup of test_SoftReset _______________________
+
+    @pytest.fixture(scope="session") #only 'make' this object once per session.
+    def pq9_connection():
+        pq9client = PQ9Client.PQ9Client(testConfig['PQ9EGSE']['server'], testConfig['PQ9EGSE']['port'])
+>       pq9client.connect()
+
+conftest.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+PQ9Client.py:25: in connect
+    self.loop.run_until_complete(self.AwaitedConnect())
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:616: in run_until_complete
+    return future.result()
+PQ9Client.py:30: in AwaitedConnect
+    self.pq9reader, self.pq9writer = await asyncio.open_connection(self.TCP_IP, self.TCP_PORT, loop=self.loop)
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/streams.py:52: in open_connection
+    transport, _ = await loop.create_connection(
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:1025: in create_connection
+    raise exceptions[0]
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:1010: in create_connection
+    sock = await self._connect_sock(
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:924: in _connect_sock
+    await self.sock_connect(sock, address)
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/selector_events.py:494: in sock_connect
+    return await fut
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_UnixSelectorEventLoop running=False closed=False debug=False>
+fut = <Future finished exception=ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 10000)")>
+sock = <socket.socket [closed] fd=-1, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6>
+address = ('127.0.0.1', 10000)
+
+    def _sock_connect_cb(self, fut, sock, address):
+        if fut.done():
+            return
+    
+        try:
+            err = sock.getsockopt(socket.SOL_SOCKET, socket.SO_ERROR)
+            if err != 0:
+                # Jump to any except clause below.
+>               raise OSError(err, f'Connect call failed {address}')
+E               ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 10000)
+
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/selector_events.py:526: ConnectionRefusedError
+_______________________ ERROR at setup of test_HardReset _______________________
+
+    @pytest.fixture(scope="session") #only 'make' this object once per session.
+    def pq9_connection():
+        pq9client = PQ9Client.PQ9Client(testConfig['PQ9EGSE']['server'], testConfig['PQ9EGSE']['port'])
+>       pq9client.connect()
+
+conftest.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+PQ9Client.py:25: in connect
+    self.loop.run_until_complete(self.AwaitedConnect())
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:616: in run_until_complete
+    return future.result()
+PQ9Client.py:30: in AwaitedConnect
+    self.pq9reader, self.pq9writer = await asyncio.open_connection(self.TCP_IP, self.TCP_PORT, loop=self.loop)
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/streams.py:52: in open_connection
+    transport, _ = await loop.create_connection(
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:1025: in create_connection
+    raise exceptions[0]
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:1010: in create_connection
+    sock = await self._connect_sock(
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:924: in _connect_sock
+    await self.sock_connect(sock, address)
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/selector_events.py:494: in sock_connect
+    return await fut
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_UnixSelectorEventLoop running=False closed=False debug=False>
+fut = <Future finished exception=ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 10000)")>
+sock = <socket.socket [closed] fd=-1, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6>
+address = ('127.0.0.1', 10000)
+
+    def _sock_connect_cb(self, fut, sock, address):
+        if fut.done():
+            return
+    
+        try:
+            err = sock.getsockopt(socket.SOL_SOCKET, socket.SO_ERROR)
+            if err != 0:
+                # Jump to any except clause below.
+>               raise OSError(err, f'Connect call failed {address}')
+E               ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 10000)
+
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/selector_events.py:526: ConnectionRefusedError
+______________________ ERROR at setup of test_PowerCycle _______________________
+
+    @pytest.fixture(scope="session") #only 'make' this object once per session.
+    def pq9_connection():
+        pq9client = PQ9Client.PQ9Client(testConfig['PQ9EGSE']['server'], testConfig['PQ9EGSE']['port'])
+>       pq9client.connect()
+
+conftest.py:41: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+PQ9Client.py:25: in connect
+    self.loop.run_until_complete(self.AwaitedConnect())
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:616: in run_until_complete
+    return future.result()
+PQ9Client.py:30: in AwaitedConnect
+    self.pq9reader, self.pq9writer = await asyncio.open_connection(self.TCP_IP, self.TCP_PORT, loop=self.loop)
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/streams.py:52: in open_connection
+    transport, _ = await loop.create_connection(
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:1025: in create_connection
+    raise exceptions[0]
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:1010: in create_connection
+    sock = await self._connect_sock(
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/base_events.py:924: in _connect_sock
+    await self.sock_connect(sock, address)
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/selector_events.py:494: in sock_connect
+    return await fut
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <_UnixSelectorEventLoop running=False closed=False debug=False>
+fut = <Future finished exception=ConnectionRefusedError(61, "Connect call failed ('127.0.0.1', 10000)")>
+sock = <socket.socket [closed] fd=-1, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6>
+address = ('127.0.0.1', 10000)
+
+    def _sock_connect_cb(self, fut, sock, address):
+        if fut.done():
+            return
+    
+        try:
+            err = sock.getsockopt(socket.SOL_SOCKET, socket.SO_ERROR)
+            if err != 0:
+                # Jump to any except clause below.
+>               raise OSError(err, f'Connect call failed {address}')
+E               ConnectionRefusedError: [Errno 61] Connect call failed ('127.0.0.1', 10000)
+
+/Library/Frameworks/Python.framework/Versions/3.8/lib/python3.8/asyncio/selector_events.py:526: ConnectionRefusedError
+=============================== warnings summary ===============================
+test_ADCS.py::test_ADCS
+  /Users/stefanosperett/Documents/PocketQube/FlightSoftware/DelfiPQ-PythonTestScripts/Generic/PQ9Client.py:30: DeprecationWarning: The loop argument is deprecated since Python 3.8, and scheduled for removal in Python 3.10.
+    self.pq9reader, self.pq9writer = await asyncio.open_connection(self.TCP_IP, self.TCP_PORT, loop=self.loop)
+
+-- Docs: https://docs.pytest.org/en/latest/warnings.html
+- generated html file: file:///Users/stefanosperett/Documents/PocketQube/FlightSoftware/DelfiPQ-PythonTestScripts/Generic/ADCSTestReport.html -
+=========================== short test summary info ============================
+ERROR test_ADCS.py::test_ADCS - ConnectionRefusedError: [Errno 61] Connect ca...
+ERROR test_PingService.py::test_SinglePing - ConnectionRefusedError: [Errno 6...
+ERROR test_PingService.py::test_MultiplePing - ConnectionRefusedError: [Errno...
+ERROR test_PingService.py::test_PingWithExtraBytes - ConnectionRefusedError: ...
+ERROR test_ResetService.py::test_SoftReset - ConnectionRefusedError: [Errno 6...
+ERROR test_ResetService.py::test_HardReset - ConnectionRefusedError: [Errno 6...
+ERROR test_ResetService.py::test_PowerCycle - ConnectionRefusedError: [Errno ...
+========================= 1 warning, 7 errors in 1.12s =========================
