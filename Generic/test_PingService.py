@@ -16,7 +16,7 @@ def test_SinglePing(pq9_connection, destination):
     print("Elapsed time: ", round(elapsedTime * 1000, 0), " ms")
     
 def test_MultiplePing(pq9_connection, destination):
-    repeat = 10
+    repeat = 1000
     command = {}
     command["_send_"] = "Ping"
     command["Destination"] = destination
@@ -29,11 +29,11 @@ def test_MultiplePing(pq9_connection, destination):
         	count+= 1
     elapsedTime = time.time() - startTime
     print("Elapsed time: ", round(elapsedTime * 1000, 0), " ms")
-    print("Responses ", count)
+    print("Responses ", count, "/", repeat)
     assert count == repeat, "Missing reponses"    
 
 def test_PingWithExtraBytes(pq9_connection, destination):
-    repeat = 25
+    repeat = 254
     command = {}
     command["_send_"] = "SendRaw"
     command["dest"] = getAddress(destination)
@@ -50,5 +50,5 @@ def test_PingWithExtraBytes(pq9_connection, destination):
         	count+= 1
     elapsedTime = time.time() - startTime
     print("Elapsed time: ", round(elapsedTime * 1000, 0), " ms")
+    print("Responses ", count, "/", repeat)
     assert count == repeat, "Missing reponses"
-    print("All Ping requests received")
