@@ -24,6 +24,7 @@ class PQ9Client:
             self.loop = asyncio.new_event_loop()
             self.loop.run_until_complete(self.AwaitedConnect())
         except ConnectionRefusedError:
+            print('connection refused')
         except TimeoutError:
             print('timeout error')
 
