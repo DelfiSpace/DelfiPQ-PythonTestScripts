@@ -1,0 +1,5 @@
+# ADCS board test suite
+[pytest]
+addopts = --self-contained-html --html=ADCSTestReport.html --destination=ADCS
+testpaths = ../Generic ./
+python_files = test_ResetService.py test_PingService.py test_ADCS.py

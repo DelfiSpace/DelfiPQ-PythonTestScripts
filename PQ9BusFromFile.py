@@ -3,7 +3,7 @@ import sys
 import time
 
 if __name__ == "__main__":
-    pq9client = PQ9Client.PQ9Client()
+    pq9client = PQ9Client.PQ9Client("localhost","10000")
     pq9client.connect()
 
     # comPortName = sys.argv[1]

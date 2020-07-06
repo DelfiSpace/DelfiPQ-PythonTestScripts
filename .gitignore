@@ -1,10 +1,11 @@
 
 *.pyc
 *.csv
-
 *.bin
-
 *.pq9
-
-
 *.pq9_response
+*.html
+assets/
+__pycache__/
+
+Generic/TestConfig.ini
