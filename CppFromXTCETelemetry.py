@@ -112,12 +112,14 @@ if __name__ == "__main__":
 {
 protected:
 """ % targetName)
-    fo.write("unsigned char telemetry[EPS_CONTAINER_SIZE];\n\n")
+    fo.write("unsigned char telemetry[%s_CONTAINER_SIZE];\n\n" % targetName)
     fo.write("""public:
     virtual int size();
     virtual unsigned char * getArray();\n
 """)
     for telemetryItem in TelemetryList:
+        if(telemetryItem == "SingleBitPadding"):
+            continue
         paramtype = getParamType(xtceDatabase, telemetryItem)
         fo.write("    %s get%s();\n" % (paramtype, telemetryItem))
         fo.write("    void set%s(%s var);\n\n" % (telemetryItem, paramtype))
@@ -141,6 +143,9 @@ protected:
 
     telemetryPointer = 0 ## bit pointer
     for telemetryItem in TelemetryList:
+        if(telemetryItem == "SingleBitPadding"):
+            telemetryPointer += 1
+            continue
         paramtype = getParamType(xtceDatabase, telemetryItem)
 
         if (paramtype == "long" or paramtype == "unsigned long"):
