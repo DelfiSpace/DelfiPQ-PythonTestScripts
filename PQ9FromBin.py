@@ -161,7 +161,7 @@ if __name__ == "__main__":
         fo.write(bytes(str("\n"), 'ascii'))
         count += 1
 
-    #Start OTA
+    #Stop OTA
     fo.write(bytes(str(SERVICE_NUMBER)+" 1 7"+"\n", 'ascii'))
 
     
