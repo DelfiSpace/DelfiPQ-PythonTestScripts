@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
     #Erase Slot Command:
     fo.write(bytes(str(SERVICE_NUMBER)+" 1 8 "+SlotNumber+"\n", 'ascii'))
-    fo.write(bytes(str(SERVICE_NUMBER)+" 2 8 13"+"\n", 'ascii'))
+    fo.write(bytes(str(SERVICE_NUMBER)+" 1 8 13"+"\n", 'ascii'))
 
     #Start OTA
     fo.write(bytes(str(SERVICE_NUMBER)+" 1 0 "+SlotNumber+"\n", 'ascii'))
