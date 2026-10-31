@@ -88,8 +88,8 @@ if __name__ == "__main__":
     fo.write(bytes(str(SERVICE_NUMBER)+" 1 8 "+SlotNumber+"\n", 'ascii'))
     fo.write(bytes(str(SERVICE_NUMBER)+" 1 8 13"+"\n", 'ascii'))
 
-    #Start OTA
-    fo.write(bytes(str(SERVICE_NUMBER)+" 1 0 "+SlotNumber+"\n", 'ascii'))
+    #Start OTA for a new upload (not a restart)
+    fo.write(bytes(str(SERVICE_NUMBER)+" 1 0 "+SlotNumber+" 0 \n", 'ascii'))
 
     #Send MetaData
     fo.write(bytes(str(SERVICE_NUMBER)+" 1 1 ", 'ascii'))
